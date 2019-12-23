@@ -1,0 +1,119 @@
+// #include "TrieNode.h"
+#include <string>
+#include <vector>
+class TrieNode {
+	public :
+	char data;
+	TrieNode **children;
+	bool isTerminal;
+
+	TrieNode(char data) {
+		this -> data = data;
+		children = new TrieNode*[26];
+		for(int i = 0; i < 26; i++) {
+			children[i] = NULL;
+		}
+		isTerminal = false;
+	}
+};
+
+class Trie {
+	TrieNode *root;
+
+	public :
+	int count;
+
+	Trie() {
+		this->count = 0;
+		root = new TrieNode('\0');
+	}
+
+	bool insertWord(TrieNode *root, string word) {
+		// Base case
+		if(word.size() == 0) {
+			if (!root->isTerminal) {
+				root -> isTerminal = true;
+				return true;	
+			} else {
+				return false;
+			}
+		}
+
+		// Small Calculation
+		int index = word[0] - 'a';
+		TrieNode *child;
+		if(root -> children[index] != NULL) {
+			child = root -> children[index];
+		}
+		else {
+			child = new TrieNode(word[0]);
+			root -> children[index] = child;
+		}
+
+		// Recursive call
+		return insertWord(child, word.substr(1));
+	}
+
+	// For user
+	void insertWord(string word) {
+		if (insertWord(root, word)) {
+			this->count++;
+		}
+	}
+    
+    TrieNode* find(TrieNode* root,string pattern)
+    {
+        if(pattern.size()==0)
+        {
+            return root;
+        }
+        
+        int index= pattern[0]-'a';
+        TrieNode *child;
+        if(root->children[index] != NULL)
+        {
+            child = root->children[index];
+            return find(child,pattern.substr(1));
+        }
+        else
+            return NULL;       
+    }
+    
+    void print(TrieNode* root,string word,string output)
+    {
+        if(root->isTerminal==true)
+        {
+            cout<<word+output<<endl;
+            // return;
+        }
+        
+        for(int i=0;i<26;i++)
+        {
+            if(root->children[i] != NULL)
+            {
+                print(root->children[i],word,output+root->children[i]->data);
+            }
+        }
+        
+       
+    }
+    void autoComplete(vector<string> input, string pattern) {
+        // Complete this function
+        // Print the output as specified in question
+        
+       for(int i=0;i<input.size();i++)
+       {
+           insertWord(input[i]);
+       }
+        
+       TrieNode* node=find(root,pattern); 
+        if(node==NULL)
+            return;
+        string output="";
+        print(node,pattern,output);
+    }
+    
+    
+    
+
+};
